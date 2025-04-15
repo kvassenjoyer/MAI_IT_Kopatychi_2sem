@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/account_style.css" %}" />
+
+<h1 class="start_header">Мои данные</h1>
+
+<div class="user-info">
+
+    <div class="user-text-info">
+        <p>Рейтинг: {{ user.rating }}</p>
+        <p>Фамилия: {{ user.last_name }}</p>
+        <p>Имя: {{ user.first_name }}</p>
+        <p>Отчество: {{ user.middle_name }}</p>
+        <p>Почта: {{ user.email }}</p>
+        <p>Логин: {{ user.username }}</p>
+
+        <button id="qrButton" type="button">Мой QR-код</button>
+        <div id="qrPopup" class="popup">
+            <div id="qrPopupContent" class="popup-content">
+                <h1>Мой QR-код</h1>
+                <img id="qr-photo" class=qr-photo></img>
+                <div><button id="closeQRPopup" type="button">Закрыть</button></div>
+            </div>
+        </div>
+        
+        <div id="interestsPopup" class="popup">
+            <div id="interestsPopupContent" class="popup-content">
+                <h1>Уведомление:</h1>
+                <p>Вы можете указать свои интересы для лучшей рекомендации мероприятий, нажав "Редактировать данные" в личном кабинете.</p> 
+                <div><button id="closeInterestsPopup" type="button">Закрыть</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-photo-wrapper" >
+        <div id="user-photo" class="user-photo"></div>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="button" onclick="location.href = '{% url 'user_edit' user.id %}'">Редактировать данные</button>
+        </form>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Выйти из аккаунта</button>
+        </form>
+    </div>
+    
+</div>
+
+<h1>Мои мероприятия</h1>
+
+<div class="create_event_button"><button type="button" onclick="location.href = '{% url 'eventcreate' %}'">Добавить мероприятие</button></div>
+
+<div id="my_events" class="events-container">
+    {% if not my_events %}
+        <p class="none-events">Нет соответвующих мероприятий</p>
+    {% else %}
+    {% for event in my_events %}
+        {% include 'event_block.html' %}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<h1>Ближайшие мероприятия</h1>
+<div id="future_events" class="events-container">
+    {% if not future_events %}
+        <p class="none-events">Нет соответвующих мероприятий</p>
+    {% else %}
+    {% for event in future_events %}
+        {% include 'event_block.html' %}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<h1>Моя история мероприятий</h1>
+<div id="past_events" class="events-container">
+    {% if not past_events %}
+        <p class="none-events">Нет соответвующих мероприятий</p>
+    {% else %}
+    {% for event in past_events %}
+        {% include 'event_block.html' %}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+image_path = "{{ user.image }}";
+splited_path = image_path.split('/');
+photo_name = splited_path[splited_path.length - 1];
+photo_name = "../static/user_images/" + photo_name;
+
+id_user_image = document.getElementById("user-photo");
+id_user_image.style.backgroundImage = 'url(' + photo_name + ')';
+
+qr_name = "../static/user_qr_images/qr_code_{{ user.id }}.png";
+
+id_user_qr = document.getElementById("qr-photo");
+id_user_qr.src = qr_name;
+
+{% for event in my_events %}
+    image_path = "{{ event.image }}";
+    splited_path = image_path.split('/');
+    fileName = splited_path[splited_path.length - 1];
+    fileName = '{% static 'event_images/' %}' + fileName;
+
+    id_event_image = document.getElementById("img{{ event.id }}");
+    id_event_image.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+{% for event in future_events %}
+    image_path = "{{ event.image }}";
+    splited_path = image_path.split('/');
+    fileName = splited_path[splited_path.length - 1];
+    fileName = '{% static 'event_images/' %}' + fileName;
+
+    id_event_image = document.getElementById("img{{ event.id }}");
+    id_event_image.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+{% for event in past_events %}
+    image_path = "{{ event.image }}";
+    splited_path = image_path.split('/');
+    fileName = splited_path[splited_path.length - 1];
+    fileName = '{% static 'event_images/' %}' + fileName;
+
+    id_event_image = document.getElementById("img{{ event.id }}");
+    id_event_image.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+{% if not is_interests_specified %}
+    interestsPopup.classList.add("show");
+    document.body.style.overflow = "hidden";
+{% endif %}
+
+closeInterestsPopup.addEventListener(
+    "click",
+    function () {
+        interestsPopup.classList.remove("show");
+        document.body.style.overflow = "auto";
+    }
+);
+
+qrButton.addEventListener(
+    "click",
+    function () {
+        qrPopup.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+);
+closeQRPopup.addEventListener(
+    "click",
+    function () {
+        qrPopup.classList.remove("show");
+        document.body.style.overflow = "auto";
+    }
+);
+window.addEventListener(
+    "click",
+    function (event) {
+        if (event.target == qrPopup) {
+            qrPopup.classList.remove("show");
+            document.body.style.overflow = "auto";
+        }
+
+        if (event.target == interestsPopup) {
+            interestsPopup.classList.remove("show");
+            document.body.style.overflow = "auto";
+        }
+    }
+);
+</script>
+
+{% endblock %}

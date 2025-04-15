@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/signup_style.css" %}" />
+
+<div class="reg_form">
+    <div class="top_text">
+        <p>Регистрация</p>
+    </div>
+    <div class="form_label">
+        <form method="post" class="user-update-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                {{field.label_tag}}
+                {{field}}
+            </p>
+        {% endfor %}
+        <div id='errors_div' class="errors_div">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <a> Ошибка: {{error}} </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

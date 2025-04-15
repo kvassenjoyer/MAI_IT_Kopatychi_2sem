@@ -1,0 +1,17 @@
+<div id="{{ event.organizer }}" class="event {{ event.organizer }}" data-name="{{ event.name }}" data-date="{{ event.date }}">
+    <a href="{% url 'eventpage' event.id %}">
+        <div class="top-of-eventdiv">
+            <div class="dark-img">
+                <p class="name-of-event">{{ event.name }}</p>
+                <p class="name-of-org">{{ event.organizer.last_name }}&nbsp{{ event.organizer.first_name }}</p>
+            </div>
+            <div id="img{{ event.id }}" class="imgdiv"></div>
+        </div>
+        <p class="down-event-text data-event">Дата: {{ event.date }}</p>
+        <p class="down-event-text">Место: {{ event.location }}</p>
+        {% if event.description|length > 10 %}
+            <p class="down-event-text descr">{{ event.description|slice:":50" }}...</p>
+        {% else %}
+            <p class="down-event-text descr">{{ event.description }}</p>
+        {% endif %}
+    </a>

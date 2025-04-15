@@ -1,0 +1,190 @@
+body {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+	padding: 0;
+	margin: 0;
+	font-family: "Exo 2", "Arial", sans-serif;
+    font-weight: bold;
+}
+
+body h1 {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    width: 100%;
+    text-align: center;
+}
+
+label {
+    text-align: center;
+}
+
+button, .button-like {
+    margin-top: 1%;
+    margin-bottom: 1%;
+	border: 0;
+    padding: 1%;
+    border-radius: 5px;
+    background-color: #0779E4!important;
+    color: #fff;
+    width: 16vw!important;
+    font-size: larger;
+    align-items: center !important;
+    font-family: "Exo 2", "Arial", sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#interestsButton {
+    margin-top: 0%;
+}
+
+button:hover, .button-like:hover{
+	background-color: #07ade4!important;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.user-field {
+    align-items: center;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+    padding-top: 1%;
+}
+
+label {
+    font-size: larger;
+}
+
+input[type=file] {
+    height: 0px;
+    font-size: 0px;
+    padding: 0px;
+}
+
+input[type=password]{
+    padding: 0.5cap;
+}
+
+input {
+    margin-top: 3%;
+    width: 25vw;
+    border: 1px solid grey;
+    border-radius: 5px;
+    height: 1%;
+    padding: 3%;
+    font-size: medium;
+    font-family: "Exo 2", "Arial", sans-serif;
+}
+
+.hidden-input > input {
+    width: 13vh;
+    height: 13vh;
+    opacity: 0;
+    cursor: pointer;
+}
+.hidden-input {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    border: 0;
+    width: 13vh;
+    height: 13vh;
+    display: inline-block;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 0px;
+    
+    background: center center no-repeat;
+    background-size: 100% 100%;
+    background-color: #fff;
+}
+
+.popup {
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+    overflow-y: scroll;
+	background-color: rgba(0, 0, 0, 0.4);
+	display: none;
+}
+
+.interest-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    height: max-content;
+	background-color: white;
+	margin: 5% auto;
+	padding: 20px;
+	border: 1px solid gray;
+	font-weight: bolder;
+	border-radius: 15px;
+}
+
+.interest-div label {
+    margin-top: 5%;
+    margin-bottom: 6%;
+    font-size: x-large;
+}
+
+.interest-div p {
+    margin-top: 1%;
+    font-size: larger;
+}
+
+.interest-div input[type="range"] {
+    padding-left: 0%;
+    padding-right: 0%;
+}
+
+datalist {
+    display: flex;
+    width: 85%;
+    justify-content: space-between;
+    color: #0779E4;
+    padding-left: 1.5%;
+    margin-bottom: 5%;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.interest-div button {
+    align-self: center;
+    margin-top: 10%; 
+    height: 6vh!important;
+}
+
+.show {
+	display: flex;
+}
+
+.hidden-div {
+    display: none;
+}
+
+.submit-button {
+    padding-bottom: 3%;
+    align-items: center;
+    width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+    align-self: center;
+}
+
+#tip {
+    font-size: 14px;
+    margin-top: 0.5%;
+    margin-bottom: 1%;
+}
+
+#errorDiv a {
+    font-size: 14px;
+    margin-bottom: 2%;
+    text-align: left;
+}

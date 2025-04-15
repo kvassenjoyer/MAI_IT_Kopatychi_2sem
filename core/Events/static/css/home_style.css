@@ -1,0 +1,361 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family: "Exo 2", "Arial", sans-serif;
+    font-weight: bold;
+	text-align: center;
+}
+
+input[type=submit] {
+	border: 0;
+    border-radius: 5px;
+    background-color: #0779E4!important;
+    color: #fff;
+    width: 16vw!important;
+    height: 5vh;
+    font-size: large;
+}
+
+input[type=submit]:hover {
+	border: 0;
+    border-radius: 5px;
+    background-color: #07ade4!important;
+    color: #fff;
+    width: 16vw!important;
+    height: 5vh;
+    font-size: large;
+}
+
+.header-and-filter {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	position: relative;
+	padding-top: 1%;
+}
+
+#searchInput {
+	padding: 1% 1% 1% 2.7%;
+	border: 1px solid #ccc;
+	border-radius: 15px;
+	margin-top: 0.1%;
+	margin-left: 2%;
+	background-image: url('../images/search.png');
+	background-position: 5% center;
+	background-repeat: no-repeat;
+	background-size: 20px;
+	font-size: 18px;
+}
+
+#searchInput::placeholder {
+	text-align: left;
+}
+
+.heading_main {
+    font-size: 28px;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	position: absolute;
+	left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.events-container {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	padding-top: 1%;
+	padding-bottom: 2%;
+}
+
+.event {
+	width: 20%;
+	height: 50vh;
+	background-color: #ffff;
+	border-radius: 15px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	margin: 1%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	transition: transform 0.3s ease;
+}
+
+.event:hover {
+	transform: scale(1.01);
+}
+
+.event a {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.event p {
+	text-align: left;
+	margin-left: 5%;
+	margin-top: 4%;
+	font-size: medium;
+
+}
+
+.top-of-eventdiv {
+	height: 70%;
+	width: 100%;
+    background: linear-gradient( rgba(255, 255, 255, 0.8), rgba(20, 20, 20, 0.15) );
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	position: relative;
+}
+
+.imgdiv {
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center;
+}
+
+.dark-img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.15);
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+
+.top-of-eventdiv p {
+	color: #fff;
+	float: left;
+	margin-left: 5%;
+	margin-top: 0;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.down-event-text {
+	/*font-size: 16px;*/
+	margin-top: 1%;
+	color: black;
+	font-size: .875em;
+}
+
+.descr {
+	margin-top: 6%;
+	color: #8c98a4!important;
+	font-family: 'Rubik', sans-serif;
+	font-size: .975em;
+}
+
+.data-event {
+	margin-top: 2%;
+}
+
+.name-of-event {
+	font-size: 24px;
+	margin-bottom: 2%;
+}
+
+.name-of-org {
+	font-size: 16px;
+	margin-bottom: 3%;
+}
+
+.reg_for_event {
+	background-color: #0779E4;
+	color: white;
+	padding: 5px;
+	margin: 5%;
+	font-size: .875em;
+	cursor: pointer;
+	border-radius: 10px;
+	border: 0.5px solid #ddd;
+	width: 40%;
+	height: 11%;
+}
+
+.filter_div {
+	display: flex;
+	justify-content: center;
+	float: right;
+	margin-right: 2%;
+	margin-top: 0.1%;
+}
+
+.show_btn, .dropdown-content button {
+	background-color: #0779E4;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	cursor: pointer;
+	width: 8vw;
+	border-radius: 5px;
+	border: 0.5px solid #ddd;
+	font-size: larger;
+    font-weight: bold;
+}
+
+#orgButton, .dropdown-content button{
+	width: 12vw;
+	overflow: hidden;
+}
+
+.datedropdown-content button{
+	background-color: #0779E4;
+	color: white;
+	padding: 3px;
+	height: 30px;
+	width: 30px;
+	cursor: pointer;
+	border-radius: 10px;
+	text-align: center;
+	border: 0.5px solid #ddd;
+    font-weight: bold;
+}
+
+.modal button {
+	background-color: #0779E4;
+	color: white;
+	width: 11vw;
+	height: 8vh;
+	cursor: pointer;
+	border-radius: 5px;
+	border: 0px solid #ddd;
+	font-size: larger;
+    font-weight: bold;
+	margin-top: 1%;
+	margin-bottom: 2%;
+}
+
+.show_btn:hover,  .reg_for_event:hover, .modal button:hover{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-content button:hover, .datedropdown-content button:hover {
+	background-color: #07ade4!important;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.show_btn:hover, .reg_for_event:hover {
+	background-color: #07ade4!important;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-content {
+	display: none;
+  	position: absolute;
+  	background-color: #f6f6f6;
+  	width: auto;
+  	overflow: auto;
+  	border: 0.5px solid #ddd;
+  	z-index: 1;
+	border-radius: 5%;
+}
+
+.datedropdown-content {
+	display: none;
+  	position: absolute;
+  	background-color: #f6f6f6;
+  	justify-content: center;
+	width: 20vw;
+	height: 22vh;
+  	overflow: auto;
+  	border: 0.5px solid #ddd;
+  	z-index: 1;
+	border-radius: 5%;
+	flex-direction: column;
+}
+
+.arrow-and-date {
+	display: flex;
+	align-self: center;
+	justify-content: center;
+	width: 98%;
+}
+
+.arrow-and-date p {
+	margin: auto;
+}
+
+#daysbtns {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.show {
+	display: flex;
+	flex-direction: column;
+}
+
+.show-days {
+	display: flex;
+}
+
+.filterdiv {
+	display: none;
+}
+
+.users {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.users a {
+	color: blue;
+	font-weight: lighter;
+}
+
+.p-rating {
+	font-size: 28px;
+	margin-top: 2%;
+}
+
+.tble {
+	text-align: left;
+	border-collapse: collapse;
+	font-size: 24px;
+	width: 75%;
+	margin-top: 2%;
+	margin-bottom: 1%;
+}
+
+th {
+	border: 1px solid black;
+	height: 6vh;
+	font-weight: lighter;
+	text-align: center;
+}
+
+.overlay {
+    display: none;
+	flex-direction: column;
+    position: fixed;
+	justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+	overflow-y: scroll;
+}
+
+.modal {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 2.5% 0% 2.5% 12.5%;
+    background: #fff;
+	z-index: 3;
+	width: 75%;
+	height: max-content;
+	border-radius: 15px;
+}

@@ -1,0 +1,28 @@
+services:
+  django:
+    build: .
+    container_name: django
+    command: bash -c "python3 /usr/src/app/core/manage.py migrate && python3 /usr/src/app/core/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app
+    # Открытие порта на хостовой машине и перенаправление на порт в контейнере
+    ports:
+      - 8000:8000
+    # Зависимость от другого сервиса
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:16.2
+    environment:
+      POSTGRES_DB: "main"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "pswd"
+    container_name: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
+    ports:
+      - "5432:5432"
+
+volumes:
+  habrdb-data:

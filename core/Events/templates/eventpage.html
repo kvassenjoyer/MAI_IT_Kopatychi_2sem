@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Страница мероприятия{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static "css/eventpage_style.css" %}" />
+
+<div class="dark-img">
+    <p class="name-of-event">{{ event.name }}</p>
+    <div class="infa">
+        <a class="name-of-org" href="{% url 'userprofile' event.organizer.id %}"> {{ event.organizer.last_name }}&nbsp{{ event.organizer.first_name }}</a>
+        <p class="event-date">{{ event.date }}</p>
+        <p class="location">{{ event.location }}</p>
+        <!--    <p>{{ event.max_members }}</p>-->
+    </div>
+    {% if user.is_authenticated %}
+        {% if user == event.organizer or user.status.status == 'admin' %}
+            <a href="{% url 'event_edit' event.id %}"><button class="btn">Редактировать</button></a>
+            <p class="about-event">О событии</p>
+            <p class="description">{{ event.description }}</p>
+        {% elif event.date > now %}
+            {%if user not in members %}
+                <form action="{% url 'reg_unreg_on_event' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="register">
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                <input type="submit" class="btn" value="Зарегистрироваться" name="mybtn">
+                </form>
+                <p class="about-event">О событии</p>
+                <p class="description">{{ event.description }}</p>
+            {% else %}
+                <form action="{% url 'reg_unreg_on_event' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="unregister">
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                <input type="submit" class="btn" value="Отказаться от регистрации" name="mybtn">
+                </form>
+                <p class="about-event">О событии</p>
+                <p class="description">{{ event.description }}</p>
+            {% endif %}
+        {% elif user.status.status == 'expert' and user in members %}
+            <p class="about-event">О событии</p>
+            <p class="description">{{ event.description }}</p>
+        {% else %}
+            <p class="about-event">Мероприятие уже прошло, регистрация закрыта.</p>
+            <p class="about-event">О событии</p>
+            <p class="description">{{ event.description }}</p>
+        {% endif %}
+    {% elif event.date >= now %}
+        <p class="about-event">Чтобы зарегистрироваться на мероприятие, пожалуйста, войдите в систему.</p>
+        <p class="about-event">О событии</p>
+        <p class="description">{{ event.description }}</p>
+    {% else %}
+        <p class="about-event">Мероприятие уже прошло</p>
+        <p class="about-event">О событии</p>
+        <p class="description">{{ event.description }}</p>
+    {% endif %}
+
+</div>
+<div id="head-event" class="head-event"></div>
+    {% if user.is_authenticated %}
+        {% if user == event.organizer or user.status.status == 'admin' %}
+        <div class="bottom-div">
+            <p class="spisok">Список зарегистрированных посетителей</p>
+
+                {% for member in members %}
+                    <div class="user-div">
+                        <p class="name-user">{{ member.last_name }} {{ member.first_name }} {{ member.middle_name }}</p>
+                        <p class="rating-number">Очков: {{ member.rating }}</p>
+                        <div class="buttons">
+                            <form action="{% url 'rate_user' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="praise">
+                                <input type="hidden" name="user" value="{{ member.username }}">
+                                <input type="hidden" name="event_id" value="{{ event.id }}">
+                                <input type="submit" class="btn" value="Похвалить" name="mybtn">
+                            </form>
+                            <form action="{% url 'rate_user' %}" method="post" class="form-hate">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="scold">
+                                <input type="hidden" name="user" value="{{ member.username }}">
+                                <input type="hidden" name="event_id" value="{{ event.id }}">
+                                <input type="submit" class="btn" value="Выговор" name="mybtn">
+
+                            </form>
+
+                        </div>
+                    </div>
+                {% endfor %}
+
+        </div>
+        {% elif event.date > now %}
+            {%if user not in members %}
+
+            {% else %}
+
+            {% endif %}
+        {% elif user.status.status == 'expert' and user in members %}
+        <div class="bottom-div">
+            <p class="spisok">Вы можете похвалить участников</p>
+            <ul>
+                {% for member in members %}
+                    <li>{{ member.username }}</li>
+                    <form action="{% url 'rate_user' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="praise">
+                        <input type="hidden" name="user" value="{{ member.username }}">
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <input type="submit" class="btn" value="Похвалить" name="mybtn">
+                    </form>
+                    <form action="{% url 'rate_user' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="scold">
+                        <input type="hidden" name="user" value="{{ member.username }}">
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <input type="submit" class="btn" value="Выговор" name="mybtn">
+                        <p>{{ member.rating }}</p>
+                    </form>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+
+        {% endif %}
+    {% elif event.date >= now %}
+
+    {% else %}
+
+    {% endif %}
+<script>
+    imgpath = '{% static 'event_images/' %}' + '{{ event.image }}';
+    idimgevent = document.getElementById("head-event");
+    idimgevent.style.backgroundImage = 'url(' + imgpath + ')';
+</script>
+{% endblock %}

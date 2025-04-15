@@ -1,0 +1,197 @@
+body h1 {
+    padding-top: 2%;
+    padding-bottom: 3%;
+    width: 100%;
+    text-align: center;
+}
+
+.event-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    padding-bottom: 2%;
+}
+
+input {
+    align-self: center;
+    margin-top: 3%;
+    width: 25vw;
+    border: 1px solid grey;
+    border-radius: 5px;
+    height: 1%;
+    padding: 3%;
+    font-size: medium;
+    font-family: "Exo 2", "Arial", sans-serif;
+}
+
+input[type="text"], input[type="number"] {
+    padding: 10px;
+    margin-top: 1%;
+    display: inline-block;
+    border: 1px solid grey;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: "Exo 2", "Arial", sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+}
+
+textarea {
+    align-self: center;
+    width: 25vw;
+    padding: 5px;
+    margin-top: 1%;
+    display: inline-block;
+    border: 1px solid grey;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: "Exo 2", "Arial", sans-serif;
+    font-weight: lighter;
+    font-size: 16px;
+}
+
+form {
+    padding-bottom: 3%;
+    width: 100%;
+    text-align: center;
+}
+
+.user-field {
+    text-align: center;
+}
+
+form label {
+    font-size: large;
+}
+
+.btn, button {
+    align-self: center;
+    border: 0;
+    background-color: #0779E4!important;
+    color: white;
+	padding: 1%;
+    width: 16vw;
+	font-size: larger;
+	cursor: pointer;
+	border-radius: 5px;
+	border: 0.5px solid #0779E4;
+    margin-top: 1%;
+    font-weight: bold;
+}
+
+.btn:hover, button:hover{
+    border: 0.5px solid #07ade4;
+	background-color: #07ade4!important;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+input[type="file"] {
+    border: 0;
+    background: center center no-repeat;
+    background-size: 100% 100%;
+    background-image: url("/static/images/upload.png");
+    height: 3vh;
+    width: 3vh;
+    cursor: pointer;
+    justify-self: center;
+    font-size: 0px;
+    z-index: 1;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    overflow: hidden;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    display: none;
+}
+
+
+label[for="id_image"] {
+    font-family: "Exo 2", "Arial", sans-serif;
+    font-size: 16px;
+}
+
+.popup {
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+    overflow-y: scroll;
+	background-color: rgba(0, 0, 0, 0.4);
+	display: none;
+}
+
+.interest-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    height: max-content;
+	background-color: white;
+	margin: 5% auto;
+	padding: 20px;
+	border: 1px solid #888888;
+	font-weight: bolder;
+	border-radius: 15px;
+}
+
+.interest-div label {
+    margin-top: 5%;
+    margin-bottom: 6%;
+    font-size: x-large;
+}
+
+.interest-div p {
+    margin-top: 1%;
+    font-size: larger;
+}
+
+.interest-div input[type="range"] {
+    padding-left: 0%;
+    padding-right: 0%;
+}
+
+datalist {
+    display: flex;
+    width: 85%;
+    justify-content: space-between;
+    color: #0779E4;
+    padding-left: 1.5%;
+    margin-bottom: 5%;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.interest-div button {
+    align-self: center;
+    margin-top: 10%; 
+    height: 6vh!important;
+}
+
+.hidden-div {
+    display: none;
+}
+
+.show {
+	display: flex;
+}
+
+#tip {
+    font-size: small;
+    margin-top: 0.5%;
+}
+
+#errorDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#errorDiv a{
+    margin-top: 2%;
+    text-align: left;
+}

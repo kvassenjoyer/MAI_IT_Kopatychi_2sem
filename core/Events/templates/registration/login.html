@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход в личный кабинет{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/login_style.css" %}" />
+
+
+<div class="form_div">
+    <div class="top_text">
+        <p>Личный кабинет</p>
+    </div>
+    <div class="form_label">
+        <form class="form-login" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div id='errors_div' class="errors_div">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <a> Ошибка: {{error}} </a>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <button type="submit">Войти</button>
+        </form>
+        <form class="form-reg" action="{% url 'signup' %}">
+          <input class="signupbtn" type="submit" value="Зарегистрироваться" />
+        </form>
+    </div>
+</div>
+
+{% endblock %}

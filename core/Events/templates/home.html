@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/home_style.css" %}" />
+
+<div class="header-and-filter">
+    <input type="text" id="searchInput" onkeyup="searchEvents()" placeholder="Поиск">
+    <p class="heading_main">Мероприятия</p>
+    <div class="filter_div">
+        <div class="div_dates">
+            <button class="show_btn" id="showrating">Рейтинг</button>
+        </div>
+        <div class="div_dates">
+            <button class="show_btn" onclick="dateshowfunction(); day_event_sort()">Даты</button>
+            <div id="datedropdown" class="datedropdown-content">
+                <div id="arrow-and-date" class="arrow-and-date">
+                    <button onclick="prevMonth()">«</button>
+                    <p id="current-month-year" class="name-of-month-and-year">Текущий месяц</p>
+                    <button onclick="nextMonth()">»</button>
+                </div>
+                <div id="daysbtns"></div>
+            </div>
+        </div>
+        <div class="div_orgs">
+            <button id="orgButton" class="show_btn" onclick="showfunction(); orgbtn()">Организаторы</button>
+            <div id="dropdown" class="dropdown-content">
+                <button class="all" onclick="sortorgs('all')">Все</button>
+                {# здесь джаваскриптом создаются button организаторов #}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="events-container" id="events">
+  {% for event in events %}
+        {% include 'event_block.html' %}
+            {# здесь обрабатываем действие зарегистрироваться #}
+            {% if event.name not in users_events %}
+                <form action="{% url 'reg_unreg_on_event' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="register">
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                <input type="submit" class="reg_for_event" value="Зарегистрироваться" name="mybtn">
+                </form>
+            {% else %}
+                {% if user.is_authenticated %}
+                    <form action="{% url 'reg_unreg_on_event' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="unregister">
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    <input type="submit" class="reg_for_event" value="Отказаться от регистрации" name="mybtn">
+                    </form>
+                {% else %}
+                    <form action="{% url 'reg_unreg_on_event' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="register">
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    <input type="submit" class="reg_for_event" value="Зарегистрироваться" name="mybtn">
+                    </form>
+                {% endif %}
+            {% endif %}
+
+      </div>
+  {% endfor %}
+</div>
+<div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+        <p class="p-rating">Десять самых активных пользователей</p>
+    <div id="users" class="users">
+    <table class="tble">
+        <thead>
+        <tr>
+            <th style="font-weight: bold;">Место</th>
+            <th style="font-weight: bold;">Пользователь</th>
+            <th style="font-weight: bold;">Рейтинг</th>
+        </tr>
+        </thead>
+    {% if not user.is_authenticated %}
+        {% for userr in users %}
+            {% if forloop.counter <= 10 %}
+            <tr>
+                {% if userr.is_superuser %}
+                        <th>{{ forloop.counter }}</th>
+                        <th><a href="{% url 'userprofile' userr.id %}">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                        <th>{{ userr.rating }}</th>
+                    {% else %}
+                        <th>{{ forloop.counter }}</th>
+                        <th><a href="{% url 'userprofile' userr.id %}">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                        <th>{{ userr.rating }}</th>
+                    {% endif %}
+            </tr>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {% for userr in users %}
+            {% if forloop.counter <= 10 %}
+                {% if user == userr%}
+                    {% if userr.is_superuser %}
+                        <tr style="background-color: #0779E4; color: white;">
+                            <th>{{ forloop.counter }}</th>
+                            <th><a href="{% url 'userprofile' userr.id %}" style="color: white;">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                            <th>{{ user.rating }}</th>
+                        </tr>
+                    {% else %}
+                        <tr style="background-color: #0779E4; color: white;">
+                            <th>{{ forloop.counter }}</th>
+                            <th><a href="{% url 'userprofile' userr.id %}" style="color: white;">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                            <th>{{ user.rating }}</th>
+                        </tr>
+                    {% endif %}
+                {% else %}
+                <tr>
+                    {% if userr.is_superuser %}
+                        <th>{{ forloop.counter }}</th>
+                        <th><a href="{% url 'userprofile' userr.id %}">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                        <th>{{ userr.rating }}</th>
+                    {% else %}
+                        <th>{{ forloop.counter }}</th>
+                        <th><a href="{% url 'userprofile' userr.id %}">{{ userr.last_name }} {{ userr.first_name }}</a></th>
+                        <th>{{ userr.rating }}</th>
+                    {% endif %}
+                </tr>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </table>
+    </div>
+<button onclick="hiderating()">Закрыть</button>
+</div>
+</div>
+
+
+<script>
+// скрытие календаря при уводе мыши
+datedropdown.addEventListener(
+"mouseleave",
+(event) => {
+    document.getElementById("datedropdown").classList.remove("show-days");
+},
+);
+
+// скрытие списка организаторов при уводе мыши
+dropdown.addEventListener(
+"mouseleave",
+(event) => {
+    document.getElementById("dropdown").classList.remove("show");
+},
+);
+
+// скрытие рейтинга при клике вне таблицы
+const showrating = document.getElementById('showrating');
+let overlay = document.getElementById('overlay');
+let modal = document.getElementById('modal');
+
+// скрытие календаря и списка организаторов при открытии рейтинга
+showrating.addEventListener('click', () => {
+    overlay.style.display = 'flex';
+    document.body.style.overflow = "hidden";
+    document.getElementById("dropdown").classList.remove("show");
+    document.getElementById("datedropdown").classList.remove("show-days");
+});
+
+overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+        overlay.style.display = 'none';
+        document.body.style.overflow = "auto";
+    }
+});
+
+// кнопка скрыть рейтинг
+function hiderating() {
+    let overlay = document.getElementById('overlay');
+    overlay.style.display = 'none';
+    document.body.style.overflow = "auto";
+}
+
+
+{# поиск по названиям ивентов #}
+function searchEvents() {
+  let input = document.getElementById('searchInput');
+  let filter = input.value.toUpperCase();
+  let events = document.getElementById('events');
+  let event = events.getElementsByClassName('event');
+
+
+  for (var i = 0; i < event.length; i++) {
+    eventName = event[i].getAttribute('data-name');
+    if (eventName.toUpperCase().indexOf(filter) > -1) {
+      event[i].style.display = '';
+    } else {
+      event[i].style.display = 'none';
+    }
+  }
+}
+
+{# сплит пути файла картинки ивента из бд #}
+{% for event in events %}
+    strr = "{{ event.image }}";
+    splt = strr.split('/');
+    fileName = splt[splt.length - 1];
+    fileName = "../static/event_images/" + fileName;
+    idimgevent = document.getElementById("img{{ event.id }}");
+    idimgevent.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+{# дата этого дня #}
+let today = new Date();
+let day = today.getDate();
+let month = today.getMonth() + 1;
+let year = today.getFullYear();
+
+const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+const daysOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+let strday = String(today.getDate());
+{# Месяцы в js нумеруются с 0#}
+let strmonth = String(today.getMonth() + 1);
+let stryear = String(today.getFullYear());
+
+if (strmonth.length === 1) {
+    strmonth = '0' + strmonth;
+}
+if (strday.length === 1) {
+    strday = '0' + strday;
+}
+{# формат 2024-12-30 #}
+let now = stryear + '-' + strmonth + '-' + strday;
+
+{# счетчик переключения месяцев #}
+let count_shift_month = 0;
+
+{# счетчик создания кнопок дней месяца #}
+let count_create_days_btn = 0;
+
+{# месяц и год, которые установлены в календаре #}
+let calendar_month = month;
+let calendar_year = year;
+
+{# отображение в календаре текущих месяца и гойда #}
+window.onload = function() {
+    {# по-русски месяц #}
+    // let full_month = today.toLocaleString('default', { month: 'long' });
+    document.getElementById('current-month-year').textContent = `${monthNames[month - 1]} ${today.getFullYear()}`;
+}
+
+{# показ кнопок организаторов #}
+function showfunction() {
+    document.getElementById("dropdown").classList.toggle("show");
+    document.getElementById("datedropdown").classList.remove("show-days");
+}
+
+{#показ календаря и возврат настоящей даты #}
+function dateshowfunction() {
+    document.getElementById("datedropdown").classList.toggle("show-days");
+    document.getElementById("dropdown").classList.remove("show");
+}
+
+{# создаем кнопки дней месяца #}
+function day_event_sort() {
+    if (count_create_days_btn < 1) {
+        let kol_days = new Date(year, month, 0).getDate();
+        for (var i = 1; i <= 31; i++) {
+            let dropdown = document.getElementById('daysbtns');
+            let button = document.createElement('button');
+            button.textContent = String(i);
+
+            button.classList.add("day_class");
+            dropdown.appendChild(button);
+            if (String(i).length === 1) {
+                date_res = stryear + '-' + strmonth + '-0' + String(i);
+                button.setAttribute('onclick', 'sortdays("' + date_res + '")');
+            }
+            else {
+                date_res = stryear + '-' + strmonth + '-' + String(i);
+                button.setAttribute('onclick', 'sortdays("' + date_res + '")');
+            }
+            if (i > kol_days) {
+                button.style.display = "none";
+            }
+            count_create_days_btn = 1;
+        }
+    }
+}
+
+// кнопка следующий месяц
+function nextMonth() {
+    count_shift_month = count_shift_month + 1;
+    if (month < 12) {
+        month = month + 1;
+    }
+    else {
+        month = 1;
+        year = year + 1;
+        stryear = String(year);
+    }
+    if (month < 10) {
+        strmonth = '0' + String(month);
+    }
+    else {
+        strmonth = String(month);
+    }
+    let kol_days = new Date(year, month, 0).getDate();
+    let heading_date = document.getElementById('current-month-year');
+    heading_date.textContent = monthNames[month - 1] + ' ' + stryear;
+
+    let numberButtons = document.querySelectorAll(".day_class");
+    numberButtons.forEach(function(button) {
+        let buttonText = parseInt(button.innerText);
+        let daybtn = String(buttonText);
+        if (daybtn.length === 1) {
+            daybtn = '0' + daybtn;
+        }
+        button.setAttribute('onclick', 'sortdays("' + stryear + '-' + strmonth + '-' + daybtn + '")');
+        if (buttonText > kol_days) {
+            button.style.display = "none";
+        }
+        else {
+            button.style.display = "flex";
+            button.style.justifyContent = "center";
+        }
+    });
+}
+
+// кнопка предыдущий месяц
+function prevMonth() {
+    count_shift_month = count_shift_month - 1;
+    if (month > 1) {
+        month = month - 1;
+    }
+    else {
+        month = 12;
+        year = year - 1;
+        stryear = String(year);
+    }
+    if (month < 10) {
+        strmonth = '0' + String(month);
+    }
+    else {
+        strmonth = String(month);
+    }
+    let kol_days = new Date(year, month, 0).getDate();
+    let heading_date = document.getElementById('current-month-year');
+    heading_date.textContent = monthNames[month - 1] + ' ' + stryear;
+
+    let numberButtons = document.querySelectorAll(".day_class");
+    numberButtons.forEach(function(button) {
+        let buttonText = parseInt(button.innerText);
+        if (buttonText > kol_days) {
+            button.style.display = "none";
+        }
+        else {
+            button.style.display = "flex";
+            button.style.justifyContent = "center";
+        }
+    });
+}
+
+{#сортировка по дню#}
+function sortdays(day) {
+    let details_of_date = day.split("-");
+    let srtyear = details_of_date[0];
+    let srtmonth = details_of_date[1];
+    let srtday = details_of_date[2];
+    {% for event in events %}
+        event_year = '{{ event.date.year }}';
+        event_month = '{{ event.date.month }}';
+        event_day = '{{ event.date.day }}';
+        if (event_day.length === 1) {
+            event_day = '0' + event_day;
+        }
+        if (event_month.length === 1) {
+            event_month = '0' + event_month;
+        }
+        if (event_year === srtyear && event_month === srtmonth && event_day === srtday) {
+            console.log(day);
+            console.log('{{ event.date }}');
+            let divevent = document.querySelectorAll('div[data-date="{{ event.date }}"]');
+            divevent.forEach(function (div) {
+                div.style.display = 'flex';
+            });
+        }
+        else {
+            let divevent = document.querySelectorAll('div[data-date="{{ event.date }}"]');
+            divevent.forEach(function (div) {
+                div.style.display = 'none';
+            });
+        }
+    {% endfor %}
+}
+
+{# множество организаторов #}
+let orgs = {};
+{% for event in events %}
+    orgs["{{event.organizer.username}}"] = "{{event.organizer.last_name}}" + " " + "{{event.organizer.first_name}}";
+{% endfor %}
+
+{# счетчик создания кнопок организаторов #}
+let count_create_org_btn = 0;
+
+{# создание кнопок организаторов #}
+function orgbtn() {
+    if (count_create_org_btn < 1) {
+        let dropdown = document.getElementById('dropdown');
+        for (let key in orgs) {
+            let button = document.createElement('button');
+            button.textContent = orgs[key];
+            button.classList.add(key);
+            dropdown.appendChild(button);
+            button.setAttribute('onclick', 'sortorgs("' + key + '")');
+            count_create_org_btn = 1;
+        };
+    }
+}
+
+{# сортировка по организатору #}
+function sortorgs(item) {
+    if (item === 'all') {
+        {% for event in events %}
+            document.querySelectorAll("#{{ event.organizer }}").forEach(element => {
+                element.style.display = 'flex';
+            });
+        {% endfor %}
+    }
+    else {
+        {% for event in events %}
+            if (item !== "{{ event.organizer }}") {
+                document.querySelectorAll('#{{ event.organizer }}').forEach(element => {
+                    element.style.display = 'none';
+                });
+            } else {
+                document.querySelectorAll('#{{ event.organizer }}').forEach(element => {
+                    element.style.display = 'flex';
+                });
+            }
+        {% endfor %}
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/user_profile_style.css" %}" />
+
+<h1 class="start_header">Пользователь {{ profile_user.last_name }} {{ profile_user.first_name }}</h1>
+
+<div class="user-info">
+
+    <div class="user-text-info">
+        <p>Рейтинг: {{ profile_user.rating }}</p>
+        <p>Фамилия: {{ profile_user.last_name }}</p>
+        <p>Имя: {{ profile_user.first_name }}</p>
+        <p>Отчество: {{ profile_user.middle_name }}</p>
+        <button id="qrButton" type="button" onclick="location.href ='#'">QR-код пользователя</button>
+        <div id="qrPopup" class="popup">
+            <div class="popup-content">
+                <h1>QR-код пользователя</h1>
+                <h1>{{ profile_user.last_name }} {{ profile_user.first_name }}</h1>
+                <img id="qr-photo" class=qr-photo></img>
+                <div><button id="closePopup" type="button">Закрыть</button></div>
+            </div>
+        </div>    
+    </div>
+
+    <div class="user-photo-wrapper" >
+        <div id="user-photo" class="user-photo"></div>
+    </div>
+
+</div>
+
+
+<h1>Мероприятия пользователя</h1>
+
+<div id="my_events" class="events-container">
+    {% if not my_events %}
+        <p class="none-events">Нет соответвующих мероприятий</p>
+    {% else %}
+    {% for event in my_events %}
+        {% include 'event_block.html' %}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<h1>История мероприятий пользователя</h1>
+<div id="past_events" class="events-container">
+    {% if not past_events %}
+        <p class="none-events">Нет соответвующих мероприятий</p>
+    {% else %}
+    {% for event in past_events %}
+        {% include 'event_block.html' %}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+image_path = "{{ profile_user.image }}";
+splited_path = image_path.split('/');
+photo_name = splited_path[splited_path.length - 1];
+photo_name = '{% static 'user_images/' %}' + photo_name;
+
+id_user_image = document.getElementById("user-photo");
+id_user_image.style.backgroundImage = 'url(' + photo_name + ')';
+
+qr_name = '{% static 'user_qr_images/' %}' + 'qr_code_{{ profile_user.id }}.png';
+
+id_user_qr = document.getElementById("qr-photo");
+id_user_qr.src = qr_name;
+
+{% for event in my_events  %}
+    image_path = "{{ event.image }}";
+    splited_path = image_path.split('/');
+    fileName = splited_path[splited_path.length - 1];
+    fileName = '{% static 'event_images/' %}' + fileName;
+
+    id_event_image = document.getElementById("img{{ event.id }}");
+    id_event_image.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+{% for event in past_events %}
+    image_path = "{{ event.image }}";
+    splited_path = image_path.split('/');
+    fileName = splited_path[splited_path.length - 1];
+    fileName = '{% static 'event_images/' %}' + fileName;
+ 
+    id_event_image = document.getElementById("img{{ event.id }}");
+    id_event_image.style.backgroundImage = 'url(' + fileName + ')';
+{% endfor %}
+
+qrButton.addEventListener(
+    "click",
+    function () {
+        qrPopup.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+);
+closePopup.addEventListener(
+    "click",
+    function () {
+        qrPopup.classList.remove("show");
+        document.body.style.overflow = "auto";
+    }
+);
+window.addEventListener(
+    "click",
+    function (event) {
+        if (event.target == qrPopup) {
+            qrPopup.classList.remove("show");
+            document.body.style.overflow = "auto";
+        }
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование данных мероприятия{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static "css/event_edit_style.css" %}" />
+
+<h1>Данные мероприятия</h1>
+<form method="post" class="user-update-form" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.name != "interests" and field.name != "interest_powers" %}
+            <div class="event-field">
+                {{field.label_tag}}
+                <div>{{field}}</div>
+                <p id="tip">{{field.help_text}}</p>
+            </div>
+        {% endif %}
+      {% endfor %}
+      {{form.interests.label_tag}}
+      <p id="tip">(Хотя бы один ненулевой)</p>
+        <button id="interestsButton" type="button">Изменить интересы</button>
+        <div id="interestsPopup" class="popup">
+            <div id="interestDiv"class="interest-div">
+                <label>Интересы</label>
+                {% for name, power in interest_dict.items %}
+                    <p> {{ name }}</p>
+                    <input class="interest_range" type="range" min="0" max="10" value="{{ power }}" step="1" list="tickmarks"></input>
+                    <datalist id="tickmarks">
+                        {% for i in tickmarks_range %}
+                            <option>{{ i }}</option>
+                        {% endfor %}
+                    </datalist>
+                {% endfor %}
+                <button id="closeInterestsPopup" type="button">Закрыть</button>
+            </div>
+        </div>
+
+    <div id="errorDiv" class="event-field">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                {% if error == "Убедитесь, что это значение меньше либо равно 2147483647." %}
+                    <a> Ошибка числа участников: {{error}} </a>
+                {% elif error == "Введите правильную дату и время." %}
+                    <a> Ошибка даты: {{error}} </a>
+                {% elif not error == "Обязательное поле." %}
+                    <a> Ошибка: {{error}} </a>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+    
+    <div class=submit-button>
+        <button type="submit" class="btn">Изменить данные</button>
+    </div>
+
+    <div class="hidden-div">
+        {{form.interests}}
+    </div>
+
+    <div class="hidden-div">
+        {{ form.interest_powers }}
+    </div>
+  </form>
+
+<script>
+
+document.getElementsByClassName('event-field')[4].setAttribute('style','font-size: 0px');
+
+function values_from_ranges_to_checkboxes_and_charfield () {
+    var interest_range = document.getElementsByClassName('interest_range');
+    var arr = [...interest_range].map(input => input.value);
+
+    var checkboxes = document.getElementsByName('interests');
+    for (i = 0; i < checkboxes.length; ++i) {
+        checkboxes[i].checked = (arr[i] == 0) ? false : true;
+        console.log(checkboxes[i].checked);
+    }
+
+    arr = arr.filter(val => val !== "0");
+    document.getElementById('id_interest_powers').value = arr.toString();
+}
+
+values_from_ranges_to_checkboxes_and_charfield();
+
+interestsButton.addEventListener(
+    "click",
+    function () {
+        interestsPopup.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+);
+
+closeInterestsPopup.addEventListener(
+    "click",
+    function () {
+        interestsPopup.classList.remove("show");
+        values_from_ranges_to_checkboxes_and_charfield();
+        document.body.style.overflow = "auto";
+    }
+);
+
+window.addEventListener(
+    "click",
+    function (event) {
+        if (event.target == interestsPopup) {
+            interestsPopup.classList.remove("show");
+            values_from_ranges_to_checkboxes_and_charfield();
+            document.body.style.overflow = "auto";
+        }
+    }
+);
+
+</script>
+
+{% endblock %}

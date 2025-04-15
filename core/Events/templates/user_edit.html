@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование данных пользователя{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static "css/user_edit_style.css" %}" />
+
+<h1>Мои данные</h1>
+<form method="post" class="user-update-form" enctype="multipart/form-data" ame="my_form">
+    {% csrf_token %}
+    {% for field in form %}
+        {% if field.name == "password" %}
+            <div class="user-field">
+                {{field.label_tag}}
+                <button type="button" onclick="location.href = '{% url 'password_change' user.id %}'">Изменить пароль</button>
+            </div>
+        {% elif field.name == "image" %}
+            <div class="user-field">
+                {{ form.image.label_tag }}
+                <span class=hidden-input style=background-image:url("{% static "/images/upload.png" %}")>
+                    {{form.image}}
+                </span>
+            </div>
+        {% elif  field.name != "interests" and field.name != "interest_powers"%}
+            <div class="user-field">
+                {{field.label_tag}}
+                <p class=user-field-input>{{field}}</p>
+                <p id="tip">{{ field.help_text }}</p>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div class="user-field">
+        {{form.interests.label_tag}}
+        <p id="tip">(Хотя бы один ненулевой)</p>
+        <button id="interestsButton" type="button">Изменить интересы</button>
+        <div id="interestsPopup" class="popup">
+            <div id="interestDiv"class="interest-div">
+                <label>Интересы</label>
+                {% for name, power in interest_dict.items %}
+                    <p> {{ name }}</p>
+                    <input class="interest_range" type="range" min="0" max="10" value="{{ power }}" step="1" list="tickmarks"></input>
+                    <datalist id="tickmarks">
+                        {% for i in tickmarks_range %}
+                            <option>{{ i }}</option>
+                        {% endfor %}
+                    </datalist>
+                {% endfor %}
+                <button id="closeInterestsPopup" type="button">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorDiv" class="user-field">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                {% if error == "Пользователь с таким Логин уже существует." %}
+                    <a> Ошибка логина: Пользователь с таким логином уже существует. </a>
+                {% elif error == "Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_." %}
+                    <a> Ошибка логина: Он может содержать только буквы, цифры и следующие знаки: @ . + - _ </a>
+                {% elif error == "Пользователь с таким Почта уже существует." %}
+                    <a> Ошибка почты: Пользователь с такой почтой уже существует. </a>
+                {% else %}
+                    <a> Ошибка: {{error}} </a>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+    
+    <div class=submit-button>
+        <button type="submit">Изменить данные</button>
+    </div>
+
+    <div class="hidden-div">
+        {{form.interests}}
+    </div>
+
+    <div class="hidden-div">
+        {{ form.interest_powers }}
+    </div>
+</form>
+
+<script>
+
+function values_from_ranges_to_checkboxes_and_charfield () {
+    var interest_range = document.getElementsByClassName('interest_range');
+    var arr = [...interest_range].map(input => input.value);
+
+    var checkboxes = document.getElementsByName('interests');
+    for (i = 0; i < checkboxes.length; ++i) {
+        checkboxes[i].checked = (arr[i] == 0) ? false : true;
+    }
+
+    arr = arr.filter(val => val !== "0");
+    document.getElementById('id_interest_powers').value = arr.toString();
+}
+
+values_from_ranges_to_checkboxes_and_charfield();
+
+interestsButton.addEventListener(
+    "click",
+    function () {
+        interestsPopup.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+);
+
+closeInterestsPopup.addEventListener(
+    "click",
+    function () {
+        interestsPopup.classList.remove("show");
+        values_from_ranges_to_checkboxes_and_charfield();
+        document.body.style.overflow = "auto";
+    }
+);
+
+window.addEventListener(
+    "click",
+    function (event) {
+        if (event.target == interestsPopup) {
+            interestsPopup.classList.remove("show");
+            values_from_ranges_to_checkboxes_and_charfield();
+            document.body.style.overflow = "auto";
+        }
+    }
+);
+
+</script>
+
+{% endblock %}
